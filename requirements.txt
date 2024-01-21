@@ -1,0 +1,4 @@
+Django==5.0.1
+requests
+pydantic
+celery[redis]

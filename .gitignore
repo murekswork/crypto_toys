@@ -1,0 +1,4 @@
+.venv/
+log.txt
+db.sqlite3
+.idea/

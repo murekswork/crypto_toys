@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    command: python /code/manage.py runserver 0.0.0.0:8000
+    volumes:
+    - .:/code
+    ports:
+      - 8000:8000
+
+
+  redis:
+    image: redis:latest
+    hostname: redis
+    ports:
+      - 6379:6379
+
+  worker:
+    build:
+      context: .
+    hostname: worker
+    entrypoint: celery
+    command: -A celery_app.app worker --loglevel=info
+    volumes:
+      - .:/code
+    links:
+      - redis
+    depends_on:
+      - redis
