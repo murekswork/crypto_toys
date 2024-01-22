@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 from .schemas import CoinSchema
 
 coin_list = open('main/backend/coins.txt').read().split()
+
 class MainView(TemplateView):
 
     template_name = 'home.html'

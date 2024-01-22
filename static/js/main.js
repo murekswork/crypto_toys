@@ -20,6 +20,43 @@ function ajaxSelectCoin(coin_name) {
     })
 }
 
+function get_coin_follow_url(coin_name) {
+    return  BASE_URL + `ajax/${coin_name}/add_to_follow`
+}
+
+function get_unfollow_url(coin_name) {
+    return BASE_URL + `ajax/${coin_name}/unfollow`
+}
+
+function ajaxAddToFollow(coin_name) {
+    let follow_url = get_coin_follow_url(coin_name)
+    $.ajax({
+        url: follow_url,
+        success: function (ajax_message) {
+            console.log(ajax_message)
+            let follow_container = document.getElementById('follow-container')
+            follow_container.innerHTML +=
+                `<div id="${coin_name}_follow_block">
+                    <p id="${coin_name}" onClick="ajaxSelectCoin(this.textContent)" style="margin: 5px;">${coin_name}</p>
+                    <p id="${coin_name}" onClick="ajaxRemoveFromFollow(this.textContent)" style="margin: 5px;">${coin_name}</p>
+                </div>`
+
+        }
+    })
+}
+
+function ajaxRemoveFromFollow(coin_name) {
+    let unfollow_url = get_unfollow_url(coin_name)
+    $.ajax({
+        url: unfollow_url,
+        success: function (ajax_message) {
+            console.log(ajax_message)
+            let coin_disappear = document.getElementById(`${coin_name}_follow_block`)
+            coin_disappear.remove()
+        }
+    })
+}
+
 let selected_currency = 'rub'
 
 let updateDataPeriodicFunction = setInterval(function () {
@@ -37,8 +74,8 @@ function ajaxGetFullData(currency) {
             method: 'post',
             data:
                 {
-                'csrfmiddlewaretoken': TOKEN,
-                'currency': currency
+                    'csrfmiddlewaretoken': TOKEN,
+                    'currency': currency
                 },
             success: function (full_data) {
                 let table = document.getElementById('coins-table-body')
@@ -49,32 +86,28 @@ function ajaxGetFullData(currency) {
                         table.innerHTML +=
 
                             `<th>${i}</th>
-                            <td>${full_data[key][ccc]['id']}</td>
+                            <td onclick="ajaxAddToFollow(this.textContent)">${full_data[key][ccc]['id']}</td>
                             <td>${full_data[key][ccc]['current_price']} ${currency}</td>
                             <td>${full_data[key][ccc]['market_cap']} ${currency}</td>
                             <td>${full_data[key][ccc]['total_volume']}</td>
                             <td class="percentage">${full_data[key][ccc]['price_change_percentage_1h_in_currency']}%</td>
                             <td class="percentage">${full_data[key][ccc]['price_change_percentage_24h_in_currency']}%</td>
                             <td class="percentage">${full_data[key][ccc]['price_change_percentage_7d_in_currency']}%</td>`
-                    i = i + 1
-                    let tds = document.getElementsByClassName('percentage')
-                    console.log(tds)
-                    for (let td of tds) {
-                        if (parseFloat(td.innerText) < 0) {
-                            td.className = 'table-danger';
+                        i = i + 1
+                        let tds = document.getElementsByClassName('percentage')
+                        for (let td of tds) {
+                            if (parseFloat(td.innerText) < 0) {
+                                td.className = 'table-danger';
+                            } else {
+                                td.className = 'table-success';
+                            }
                         }
-                        else
-                        {
-                            td.className = 'table-success';
-                        }
-                    }
                     }
 
 
                 }
 
             }
-
 
 
         }

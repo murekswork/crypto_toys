@@ -3,15 +3,26 @@
 <link rel="stylesheet" href="{% static 'css/css.css' %}">
 {% block content %}
 
-<div class="output_window" id="test">
-    <p2>Output data</p2>
+<div id="follow-container" class="followed-container container d-flex" id="test">
+    <p style="margin: 5px">Followed coins: </p>
+    {% if request.session.follow_coins %}
+            {% for coin in request.session.follow_coins %}
+                <div id="{{ coin }}_follow_block">
+                    <p id="{{ coin }}" onclick="ajaxSelectCoin(this.textContent)" style="margin: 5px;">{{ coin }}</p>
+                    <p id="{{ coin }}" onclick="ajaxRemoveFromFollow(this.textContent)" style="margin: 5px;">{{ coin }}</p>
+                </div>
+            {% endfor %}
+    {% endif %}
 </div>
 </div>
 <h3>Home page</h3>
 
 <div id="output-data-container" class="container d-inline">
     <p2>Output data</p2>
+
 </div>
+
+
 
     <form action="">
     {% csrf_token %}
@@ -57,6 +68,7 @@
 
 
 <script>
+var BASE_URL = '{% url "home" %}'
 var TOKEN = document.getElementsByName('csrfmiddlewaretoken')[0].value
 var URL_SEND_COIN = '{% url 'ajax_send_coin' %}'
 var URL_GET_FULL_DATA = '{% url 'ajax_get_full_data' %}'
