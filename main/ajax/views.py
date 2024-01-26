@@ -23,9 +23,16 @@ def ajax_send_coin(request) -> JsonResponse:
     if request.method == 'POST':
         coin_name, currency = request.POST['coin_name'], request.POST['currency']
         coin = {}
-        with open(f'main/backend/top250{currency}.json', 'r') as f:
-            data = json.load(f)
-        coin = data[f'{coin_name}']
+        for i in range(1,4):
+            file_name = f'main/backend/top{str(i)}00{currency}.json'
+            try:
+                if coin_name in json.load(open(file_name, mode='r')):
+                    with open(file_name, 'r') as f:
+                        data = json.load(f)
+                    coin = data[f'{coin_name}']
+                    break
+            except:
+                pass
         return JsonResponse({'coin': coin}, safe=False)
     return JsonResponse({'message': 'Not implemented'})
 
@@ -40,8 +47,11 @@ def ajax_send_all_coins(request) -> JsonResponse:
     '''
     if request.method == 'POST':
         currency = request.POST['currency']
-        with open(f'main/backend/top250{currency}.json', 'r') as f:
-            data = json.load(f)
+        page = request.POST['page']
+        with open(f'main/backend/top{page}00{currency}.json', 'r') as f:
+            try:
+                data = json.load(f)
+            except: pass
             return JsonResponse({'full_data': data}, safe=False)
     return JsonResponse({'message': 'Not implemented'})
 

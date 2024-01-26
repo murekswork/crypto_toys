@@ -3,76 +3,95 @@
 <link rel="stylesheet" href="{% static 'css/css.css' %}">
 {% block content %}
 
-<div id="follow-container" class="followed-container container d-flex" id="test">
-    <p style="margin: 5px">Followed coins: </p>
-    {% if request.session.follow_coins %}
-            {% for coin in request.session.follow_coins %}
-                <div id="{{ coin }}_follow_block">
-                    <p id="{{ coin }}" onclick="ajaxSelectCoin(this.textContent)" style="margin: 5px;">{{ coin }}</p>
-                    <p id="{{ coin }}" onclick="ajaxRemoveFromFollow(this.textContent)" style="margin: 5px;">{{ coin }}</p>
-                </div>
-            {% endfor %}
-    {% endif %}
-</div>
-</div>
-<h3>Home page</h3>
+{#    <div id="follow-container" class="d-flex" id="test">#}
+{#                <p style="margin: 5px">Followed coins: </p>#}
+{#                {% if request.session.follow_coins %}#}
+{#                    {% for coin in request.session.follow_coins %}#}
+{#                        <div id="{{ coin }}_follow_block">#}
+{#                            <p id="{{ coin }}" onclick="ajaxSelectCoin(this.textContent)" style="margin: 5px;">{{ coin }}</p>#}
+{#                            <p id="{{ coin }}" onclick="ajaxRemoveFromFollow(this.textContent)"#}
+{#                               style="margin: 5px;">{{ coin }}</p>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                {% endif %}#}
+{#        </div>#}
 
-<div id="output-data-container" class="container d-inline">
-    <p2>Output data</p2>
-
-</div>
+    <div>
+        <canvas class="w-100" id="bubbleCanvas"></canvas>
+    </div>
 
 
+
+    <button onclick="create_chart()">Get dates</button>
+
+    <div class="container w-100" id="coin-information">
+
+
+    </div>
+
+    <div class="container container-md">
+
+        <select id="change-currency" name="change-currency"
+                onchange="ajaxGetFullData(this.value, document.getElementById('chart_page').value)">
+            <option value="usd">usd</option>
+            <option value="rub">rub</option>
+            <option value="eur">eur</option>
+        </select>
+        <select name='cop_chart' id="chart_page"
+                onchange="ajaxGetFullData(document.getElementById('change-currency').value, this.value)">
+            <option value="1">100</option>
+            <option value="2">200</option>
+            <option value="3">300</option>
+        </select>
+
+
+        <button onclick="ajaxGetFullData()"></button>
+    <div class="container container-md d-flex">
+        <li><a href="">Some link</a></li>
+        <li></li>
+        <li></li>
+    </div>
+    <div class="container w-100">
+
+        <table  class="table" id="coins-table"  >
+            <thead>
+            <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Name</th>
+                <a href=""><th scope="col" onclick="order_table('current_price')">Price</th></a>
+                <th scope="col" onclick="order_table('market_cap')">Market Cap</th>
+                <th scope="col" onclick="order_table('total_volume')">24 Volume</th>
+                <th scope="col" onclick="order_table('price_change_percentage_1h_in_currency')">Hour</th>
+                <th scope="col" onclick="order_table('price_change_percentage_24h_in_currency')">Day</th>
+                <th scope="col" onclick="order_table('price_change_percentage_7d_in_currency')">Week</th>
+            </tr>
+            <tbody id="coins-table-body">
+
+            </tbody>
+        </table>
+
+    </div>
 
     <form action="">
-    {% csrf_token %}
+        {% csrf_token %}
     </form>
 
-<select name="" id="currency" style="width: 100px; height: 30px">
-    <option value="usd">usd</option>
-    <option value="rub">rub</option>
-    <option value="eur">eur</option>
-</select>
-
-<div>
-{% for coin in coinlist %}
-    <button value="{{coin}}" onclick="ajaxSelectCoin(this.value)">{{coin}}</button>
-{% endfor %}
-</div>
 
 
-<div class="container">
-    <select name="change-currency" onchange="ajaxGetFullData(this.value)" id="">
-        <option value="usd">usd</option>
-        <option value="rub">rub</option>
-        <option value="eur">eur</option>
-    </select>
-    <button onclick="ajaxGetFullData()"></button>
-    <table class="table" id="coins-table">
-        <thead>
-            <tr>
-              <th scope="col">Rank</th>
-              <th scope="col">Name</th>
-              <th scope="col">Price</th>
-              <th scope="col">Market Cap</th>
-              <th scope="col">24 Volume</th>
-              <th scope="col">Hour</th>
-              <th scope="col">Day</th>
-              <th scope="col">Week</th>
-            </tr>
-        <tbody id="coins-table-body">
+    </div>
 
-        </tbody>
-    </table>
-</div>
+    </div>
 
-
-<script>
-var BASE_URL = '{% url "home" %}'
-var TOKEN = document.getElementsByName('csrfmiddlewaretoken')[0].value
-var URL_SEND_COIN = '{% url 'ajax_send_coin' %}'
-var URL_GET_FULL_DATA = '{% url 'ajax_get_full_data' %}'
-</script>
-<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script>
+        var BASE_URL = '{% url "home" %}'
+        var TOKEN = document.getElementsByName('csrfmiddlewaretoken')[0].value
+        var URL_SEND_COIN = '{% url 'ajax_send_coin' %}'
+        var URL_GET_FULL_DATA = '{% url 'ajax_get_full_data' %}'
+    </script>
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/chart.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bubbles.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 {% endblock %}

@@ -20,6 +20,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {'run-every-1-minute':
                               {
                                 'task': 'main.tasks.upload_coingecko_data',
-                                'schedule': 600.0,
+                                'schedule': 300.0,
                               }
                           }
